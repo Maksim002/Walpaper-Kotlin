@@ -80,7 +80,6 @@ class Blanc : Fragment() {
                     }
                 }
                 if (!isLoading && (pastVisibleItem + visibleItemCount) >= totalItemCount) {
-                    page++
                     loadNextPage("")
                     isLoading = true
                 }
