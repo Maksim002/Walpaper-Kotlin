@@ -5,13 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.walpaper_kotlin.R
 import com.example.walpaper_kotlin.service.model.WalModel
+import com.example.walpaper_kotlin.service.models.Example
 
 class PersonalAdapterPayments() :
     RecyclerView.Adapter<PersonalViewHolderPayments>() {
 
-    private var model: List<WalModel> = ArrayList()
+    private var model: ArrayList<String> = ArrayList()
 
-    fun listUpdate(list: List<WalModel>) {
+    fun listUpdate(list: ArrayList<String>) {
         model = list
         notifyDataSetChanged()
     }
@@ -26,21 +27,18 @@ class PersonalAdapterPayments() :
         return model.size
     }
 
-    fun add(wo: WalModel){
-        model = model + wo
+    fun addItem(list: List<String>) {
+        for (im in list) {
+            model.add(im)
+        }
         notifyDataSetChanged()
     }
 
-    fun addItem(list: List<WalModel>) {
-        for (im in list) {
-            add(im)
-        }
-    }
-
-    fun addBittom(){
-        addItem(model)
-    }
-
+//    fun remuwList() {
+//        val position = model.size -1
+//        model.get(position)
+//
+//    }
 
     override fun onBindViewHolder(holderPlateiPersonal: PersonalViewHolderPayments, position: Int) {
         holderPlateiPersonal.bind(model.get(position));

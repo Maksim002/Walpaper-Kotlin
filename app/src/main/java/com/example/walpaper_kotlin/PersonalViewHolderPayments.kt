@@ -17,9 +17,9 @@ class PersonalViewHolderPayments(itemView: View) :
     var imageIcon = itemView.findViewById<ImageView>(R.id.iconImage)
 
 
-    fun bind(item: WalModel) {
+    fun bind(item: String) {
         Glide.with(imageIcon)
-            .load(item.urls?.thumb)
+            .load(item)
             .apply(RequestOptions())
             .transform(
                 CenterCrop(),

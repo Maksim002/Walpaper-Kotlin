@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.View;
 import android.widget.SearchView;
@@ -11,8 +12,10 @@ import android.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.walpaper_kotlin.Pagination;
 import com.example.walpaper_kotlin.R;
 import com.example.walpaper_kotlin.service.model.User;
 import com.example.walpaper_kotlin.service.model.WalModel;
@@ -40,23 +43,39 @@ public class wdwdw extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
-        });
+//        recyclerView.addOnScrollListener(new Pagination() {
+//            @Override
+//            protected void logMoreItem() {
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                    }
+//                }, 1000);
+//            }
+//
+//            @Override
+//            protected int getTiralPegers() {
+//                return 0;
+//            }
+//
+//            @Override
+//            protected boolean isLoginpage() {
+//                return false;
+//            }
+//
+//            @Override
+//            protected boolean isLoginding() {
+//                return false;
+//            }
+//        });
 
     }
     private void addItem(List<WalModel> list){
         for (WalModel im : list){
 
         }
+
     }
 
     @Override

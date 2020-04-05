@@ -1,6 +1,7 @@
 package com.example.walpaper_kotlin.ui.Fragment
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -8,9 +9,11 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.tsj.adapters.pesonal.PersonalAdapterPayments
+import com.example.walpaper_kotlin.Pagination
 import com.example.walpaper_kotlin.R
 import com.example.walpaper_kotlin.service.WalpaperManager
 import com.example.walpaper_kotlin.service.model.WalModel
+import com.example.walpaper_kotlin.service.models.Example
 import com.example.walpaper_kotlin.ui.main.MainActivity
 import retrofit2.Call
 import retrofit2.Callback
@@ -23,15 +26,15 @@ class Blanc : Fragment() {
     private var host: String = "gW9sjuasObbkxughhFTiEftk-SjD7OuVSvI5aP7bRG4"
     private var key: String = "oqZ_uR-OVEfpANEHtz-u-DXjdR5lyGzMkBl-yKf-4dY"
 
-    private var page: Int = 0
-    private var tm: String? = null
+    private var page: Int = 1
 
-    private var isLoading = true
-    private var dwdwd: Int = 0
-    private var pastVisibleItem: Int = 0;
-    private var visibleItemCount: Int = 0;
-    private var totalItemCount: Int = 0;
-    private var view_threshold: Int = 30;
+    private lateinit var searchView: SearchView
+
+    val model: WalModel? = null
+
+    private var isLoading = false
+    private var isLoadPage = false
+    private var CURENT_PAGE = page
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapters: PersonalAdapterPayments
@@ -52,7 +55,6 @@ class Blanc : Fragment() {
         recyclerView.apply {
             adapter = adapters
         }
-        loadNextPage("")
 
         setHasOptionsMenu(true)
 
@@ -60,30 +62,50 @@ class Blanc : Fragment() {
 
         recyclerView.setLayoutManager(mLayoutManager);
 
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
+        val service = WalpaperManager.setupRetrofit(BASE_URL)
+        service.getMealPlanse(host, key, page)
+            .enqueue(object : Callback<List<WalModel>> {
+                override fun onResponse(call: Call<List<WalModel>>, response: Response<List<WalModel>>) {
+
+
+                    var list = ArrayList<String>()
+                    for (i in response.body()!!){
+                        list.add(i.urls?.thumb!!)
+                    }
+
+                    adapters.listUpdate(list)
+
+                    if (CURENT_PAGE <= page){
+                    }else{
+                        isLoadPage = true
+                    }
+
+                }
+
+                override fun onFailure(call: Call<List<WalModel>>, t: Throwable) {
+                    t.printStackTrace()
+                }
+            })
+
+        recyclerView.addOnScrollListener(object : Pagination(mLayoutManager) {
+            override fun logMoreItem() {
+                isLoading = true
+                page++
+
+                Handler().postDelayed({
+                    loadNextPage("")
+                }, 1000)
+            }
+            override fun getTiralPegers(): Int {
+                return page
             }
 
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
+            override fun isLoginpage(): Boolean {
+                return isLoadPage
+            }
 
-                visibleItemCount = mLayoutManager.childCount
-                totalItemCount = mLayoutManager.itemCount
-                pastVisibleItem = mLayoutManager.findFirstCompletelyVisibleItemPosition()
-
-                if (isLoading) {
-                    if (totalItemCount > view_threshold) {
-                        view_threshold = totalItemCount
-                        page++
-                        isLoading = false
-                    }
-                }
-                if (!isLoading && (pastVisibleItem + visibleItemCount) >= totalItemCount) {
-                    loadNextPage("")
-                    isLoading = true
-                }
-
+            override fun isLoginding(): Boolean {
+                return isLoading
             }
         })
     }
@@ -93,8 +115,20 @@ class Blanc : Fragment() {
             .enqueue(object : Callback<List<WalModel>> {
                 override fun onResponse(call: Call<List<WalModel>>, response: Response<List<WalModel>>) {
 
-                    adapters.listUpdate(response.body()!!)
-                    adapters.addBittom()
+                    isLoading = false
+
+                    var list = ArrayList<String>()
+                    for (i in response.body()!!){
+                        list.add(i.urls?.thumb!!)
+                    }
+
+                    adapters.addItem(list)
+
+                    if (CURENT_PAGE <= page){
+
+                    }else{
+                        isLoadPage = true
+                    }
                 }
 
                 override fun onFailure(call: Call<List<WalModel>>, t: Throwable) {
@@ -103,15 +137,61 @@ class Blanc : Fragment() {
             })
     }
 
-    private fun search(qvery: String){
+    private fun loadNextTap(qvery: String){
         val service = WalpaperManager.setupRetrofit(BASE_URL)
-        service.serch(host, key, page, qvery)
-            .enqueue(object : Callback<WalModel> {
-                override fun onResponse(call: Call<WalModel>, response: Response<WalModel>) {
-                    response.body()
+        service.serch(host, key, 1, qvery)
+            .enqueue(object : Callback<Example> {
+                override fun onResponse(call: Call<Example>, response: Response<Example>) {
+                    isLoading = false
+
+                    var map = ArrayList<String>()
+                    for (i in arrayListOf(response.body())){
+                        for (j in i!!.results){
+                            map.add(j.urls.regular)
+                        }
+                    }
+                    adapters.addItem(map)
+
+
+                    if (CURENT_PAGE <= page){
+                    }else{
+                        isLoadPage = true
+                    }
+
+
                 }
 
-                override fun onFailure(call: Call<WalModel>, t: Throwable) {
+                override fun onFailure(call: Call<Example>, t: Throwable) {
+                    t.printStackTrace()
+                }
+            })
+    }
+
+    private fun search(qvery: String){
+        val service = WalpaperManager.setupRetrofit(BASE_URL)
+        service.serch(host, key, 1, qvery)
+            .enqueue(object : Callback<Example> {
+                override fun onResponse(call: Call<Example>, response: Response<Example>) {
+                    isLoading = false
+
+                    var map = ArrayList<String>()
+                    for (i in arrayListOf(response.body())){
+                        for (j in i!!.results){
+                            map.add(j.urls.full)
+                        }
+                    }
+                        adapters.listUpdate(map)
+
+
+                    if (CURENT_PAGE <= page){
+                    }else{
+                        isLoadPage = true
+                    }
+
+
+                }
+
+                override fun onFailure(call: Call<Example>, t: Throwable) {
                     t.printStackTrace()
                 }
             })
@@ -120,7 +200,7 @@ class Blanc : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu, menu)
 
-        val searchView = SearchView((context as MainActivity).supportActionBar?.themedContext ?: context)
+        searchView = SearchView((context as MainActivity).supportActionBar?.themedContext ?: context)
         menu.findItem(R.id.menu_i).apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW or MenuItem.SHOW_AS_ACTION_IF_ROOM)
             actionView = searchView
