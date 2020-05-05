@@ -19,8 +19,6 @@ class PersonalAdapterPayments() :
         notifyDataSetChanged()
     }
 
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PersonalViewHolderPayments {
         return PersonalViewHolderPayments(
             LayoutInflater.from(parent.context).inflate(R.layout.item_personal, parent, false)
@@ -35,12 +33,6 @@ class PersonalAdapterPayments() :
             model.addAll(list)
         notifyDataSetChanged()
     }
-
-//    fun remuwList() {
-//        val position = model.size -1
-//        model.get(position)
-//
-//    }
 
     override fun onBindViewHolder(holderPlateiPersonal: PersonalViewHolderPayments, position: Int) {
         holderPlateiPersonal.bind(model.get(position));

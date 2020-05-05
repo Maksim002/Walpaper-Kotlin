@@ -1,14 +1,15 @@
 package com.example.walpaper_kotlin;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class Pagination extends RecyclerView.OnScrollListener {
 
-    private LinearLayoutManager layoutManager;
+    private GridLayoutManager layoutManager;
 
-    protected Pagination(LinearLayoutManager layoutManager){
+    protected Pagination(GridLayoutManager layoutManager){
         this.layoutManager = layoutManager;
     }
 

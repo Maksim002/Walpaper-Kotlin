@@ -9,6 +9,6 @@
     <fragment
         android:id="@+id/blanc"
         android:name="com.example.walpaper_kotlin.ui.Fragment.Blanc"
-        android:label="fragment_blanc"
+        android:label="Country of Wallpaper"
         tools:layout="@layout/fragment_blanc" />
 </navigation>
