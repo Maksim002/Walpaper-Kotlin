@@ -26,6 +26,9 @@ class Blanc : Fragment() {
     private var host: String = "gW9sjuasObbkxughhFTiEftk-SjD7OuVSvI5aP7bRG4"
     private var key: String = "oqZ_uR-OVEfpANEHtz-u-DXjdR5lyGzMkBl-yKf-4dY"
 
+    private lateinit var mLayoutManager: LinearLayoutManager
+    private  var qvery = ""
+
     private var page: Int = 1
 
     private lateinit var searchView: SearchView
@@ -58,143 +61,100 @@ class Blanc : Fragment() {
 
         setHasOptionsMenu(true)
 
-        val mLayoutManager = LinearLayoutManager(context)
+        mLayoutManager = LinearLayoutManager(context)
 
         recyclerView.setLayoutManager(mLayoutManager);
 
-        val service = WalpaperManager.setupRetrofit(BASE_URL)
-        service.getMealPlanse(host, key, page)
-            .enqueue(object : Callback<List<WalModel>> {
-                override fun onResponse(call: Call<List<WalModel>>, response: Response<List<WalModel>>) {
+        loadNextPage()
 
+            recyclerView.addOnScrollListener(object : Pagination(mLayoutManager) {
+                override fun logMoreItem() {
+                    isLoading = true
+                    page++
 
-                    var list = ArrayList<String>()
-                    for (i in response.body()!!){
-                        list.add(i.urls?.thumb!!)
-                    }
-
-                    adapters.listUpdate(list)
-
-                    if (CURENT_PAGE <= page){
-                    }else{
-                        isLoadPage = true
-                    }
-
+                    Handler().postDelayed({
+                        loadNextPage()
+                    }, 500)
+                }
+                override fun getTiralPegers(): Int {
+                    return page
                 }
 
-                override fun onFailure(call: Call<List<WalModel>>, t: Throwable) {
-                    t.printStackTrace()
-                }
-            })
-
-        recyclerView.addOnScrollListener(object : Pagination(mLayoutManager) {
-            override fun logMoreItem() {
-                isLoading = true
-                page++
-
-                Handler().postDelayed({
-                    loadNextPage("")
-                }, 1000)
-            }
-            override fun getTiralPegers(): Int {
-                return page
-            }
-
-            override fun isLoginpage(): Boolean {
-                return isLoadPage
-            }
-
-            override fun isLoginding(): Boolean {
-                return isLoading
-            }
-        })
-    }
-    private fun  loadNextPage(tm: String){
-        val service = WalpaperManager.setupRetrofit(BASE_URL)
-        service.getMealPlanse(host, key, page)
-            .enqueue(object : Callback<List<WalModel>> {
-                override fun onResponse(call: Call<List<WalModel>>, response: Response<List<WalModel>>) {
-
-                    isLoading = false
-
-                    var list = ArrayList<String>()
-                    for (i in response.body()!!){
-                        list.add(i.urls?.thumb!!)
-                    }
-
-                    adapters.addItem(list)
-
-                    if (CURENT_PAGE <= page){
-
-                    }else{
-                        isLoadPage = true
-                    }
+                override fun isLoginpage(): Boolean {
+                    return isLoadPage
                 }
 
-                override fun onFailure(call: Call<List<WalModel>>, t: Throwable) {
-                    t.printStackTrace()
+                override fun isLoginding(): Boolean {
+                    return isLoading
                 }
             })
+
     }
+    private fun  loadNextPage(update:Boolean = false){
+        if (qvery.isNotEmpty()){
 
-    private fun loadNextTap(qvery: String){
-        val service = WalpaperManager.setupRetrofit(BASE_URL)
-        service.serch(host, key, 1, qvery)
-            .enqueue(object : Callback<Example> {
-                override fun onResponse(call: Call<Example>, response: Response<Example>) {
-                    isLoading = false
+            val service = WalpaperManager.setupRetrofit(BASE_URL)
+            service.serch(host, key, page, qvery)
+                .enqueue(object : Callback<Example> {
+                    override fun onResponse(call: Call<Example>, response: Response<Example>) {
+                        isLoading = false
 
-                    var map = ArrayList<String>()
-                    for (i in arrayListOf(response.body())){
-                        for (j in i!!.results){
-                            map.add(j.urls.regular)
+                        var map = ArrayList<String>()
+                        for (i in arrayListOf(response.body())){
+                            for (j in i!!.results){
+                                map.add(j.urls.small)
+                            }
+                        }
+                        if (!update){
+                            adapters.addItem(map)
+                        }else{
+                            adapters.listUpdate(map)
+                        }
+
+
+
+                        if (CURENT_PAGE <= page){
+                        }else{
+                            isLoadPage = true
+                        }
+
+
+                    }
+
+                    override fun onFailure(call: Call<Example>, t: Throwable) {
+                        t.printStackTrace()
+                    }
+                })
+        }else{
+            val service = WalpaperManager.setupRetrofit(BASE_URL)
+            service.getMealPlanse(host, key, page)
+                .enqueue(object : Callback<List<WalModel>> {
+                    override fun onResponse(call: Call<List<WalModel>>, response: Response<List<WalModel>>) {
+
+                        isLoading = false
+
+                        var list = ArrayList<String>()
+                        for (i in response.body()!!){
+                            list.add(i.urls?.thumb!!)
+                        }
+                        if (!update){
+                            adapters.addItem(list)
+                        }else{
+                            adapters.listUpdate(list)
+                        }
+
+                        if (CURENT_PAGE <= page){
+
+                        }else{
+                            isLoadPage = true
                         }
                     }
-                    adapters.addItem(map)
 
-
-                    if (CURENT_PAGE <= page){
-                    }else{
-                        isLoadPage = true
+                    override fun onFailure(call: Call<List<WalModel>>, t: Throwable) {
+                        t.printStackTrace()
                     }
-
-
-                }
-
-                override fun onFailure(call: Call<Example>, t: Throwable) {
-                    t.printStackTrace()
-                }
-            })
-    }
-
-    private fun search(qvery: String){
-        val service = WalpaperManager.setupRetrofit(BASE_URL)
-        service.serch(host, key, 1, qvery)
-            .enqueue(object : Callback<Example> {
-                override fun onResponse(call: Call<Example>, response: Response<Example>) {
-                    isLoading = false
-
-                    var map = ArrayList<String>()
-                    for (i in arrayListOf(response.body())){
-                        for (j in i!!.results){
-                            map.add(j.urls.full)
-                        }
-                    }
-                        adapters.listUpdate(map)
-
-
-                    if (CURENT_PAGE <= page){
-                    }else{
-                        isLoadPage = true
-                    }
-
-
-                }
-
-                override fun onFailure(call: Call<Example>, t: Throwable) {
-                    t.printStackTrace()
-                }
-            })
+                })
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -207,13 +167,23 @@ class Blanc : Fragment() {
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                search(query)
+            override fun onQueryTextSubmit(text: String): Boolean {
+               if (text.equals(qvery)){
+                   loadNextPage()
+               }else{
+                   page = 1
+                   qvery = text
+                   loadNextPage(true)
+               }
                 return false
             }
 
-            override fun onQueryTextChange(newText: String): Boolean {
-                search(newText)
+            override fun onQueryTextChange(text: String): Boolean {
+                    if (text.isEmpty() && qvery.isNotEmpty()){
+                            page = 1
+                            qvery = ""
+                            loadNextPage(true)
+                    }
                 return false
             }
         })

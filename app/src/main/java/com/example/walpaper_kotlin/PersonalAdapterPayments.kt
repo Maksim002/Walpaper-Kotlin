@@ -13,9 +13,13 @@ class PersonalAdapterPayments() :
     private var model: ArrayList<String> = ArrayList()
 
     fun listUpdate(list: ArrayList<String>) {
+        model.clear()
+        notifyDataSetChanged()
         model = list
         notifyDataSetChanged()
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PersonalViewHolderPayments {
         return PersonalViewHolderPayments(
@@ -28,9 +32,7 @@ class PersonalAdapterPayments() :
     }
 
     fun addItem(list: List<String>) {
-        for (im in list) {
-            model.add(im)
-        }
+            model.addAll(list)
         notifyDataSetChanged()
     }
 
