@@ -1,19 +1,12 @@
 package com.example.walpaper_kotlin.ui.Fragment
 
-import android.app.WallpaperManager
-import android.content.Context
-import android.graphics.Bitmap
-import android.os.AsyncTask
+
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.ArrayMap
-import android.util.ArraySet
 import android.view.*
 import android.widget.SearchView
 import androidx.annotation.RequiresApi
-import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -27,7 +20,6 @@ import com.example.walpaper_kotlin.service.WalpaperManager
 import com.example.walpaper_kotlin.service.model.WalModel
 import com.example.walpaper_kotlin.service.models.Example
 import com.example.walpaper_kotlin.ui.main.MainActivity
-import okio.utf8Size
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -125,7 +117,7 @@ class Blanc : Fragment(), InvoiceListener {
                         var map = ArrayList<String>()
                         for (i in arrayListOf(response.body())) {
                             for (j in i!!.results) {
-                                map.add(j.urls.small)
+                                map.add(j.urls.raw)
                             }
                         }
                         if (!update) {
@@ -133,8 +125,6 @@ class Blanc : Fragment(), InvoiceListener {
                         } else {
                             adapters.listUpdate(map)
                         }
-
-
 
                         if (CURENT_PAGE <= page) {
                         } else {
@@ -158,10 +148,10 @@ class Blanc : Fragment(), InvoiceListener {
 
                         isLoading = false
                         val list = ArrayList<String>()
-//                        list_m = ArrayList<String>()
+                        list_m = ArrayList()
 
                         for (i in response.body()!!) {
-                            list.add(i.urls?.raw!!)
+                            list.add(i.urls?.regular!!)
 //                            list_m.add(i.urls?.full!!)
                         }
 
@@ -220,16 +210,18 @@ class Blanc : Fragment(), InvoiceListener {
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
-    override fun onClickDelete(image: String) {
-        val map = ArraySet<String>()
-        for (i in image){
-            for (j in list_m.size.toString()){
-                if (i.toString() == j.toString()){
-                    map.add(j.toString())
-                }
-            }
-        }
+    override fun onClickDelete(image: String){
 
+
+//        val map = ArraySet<String>()
+//        for (i in image){
+//            for (j in list_m.size.toString()){
+//                if (i.toString() == j.toString()){
+//                    map.add(j.toString())
+//                }
+//            }
+//        }
+        MainActivity.alert.show()
         click_image = DownloadImageTask(requireContext()).execute(image) as DownloadImageTask
     }
 }

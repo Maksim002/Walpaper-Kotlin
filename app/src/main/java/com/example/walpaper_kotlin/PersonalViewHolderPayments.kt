@@ -8,28 +8,29 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.example.walpaper_kotlin.R
+import kotlinx.android.synthetic.main.item_personal.view.*
 
 class PersonalViewHolderPayments(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     var imageIcon = itemView.findViewById<ImageView>(R.id.iconImage)
     var image = itemView.findViewById<ImageView>(R.id.image_installation)
 
-    fun bind(
-        item: String,
-        listener: InvoiceListener
-    ) {
-        Glide.with(imageIcon)
-            .load(item)
-            .apply(RequestOptions())
-            .transform(
-                CenterCrop(),
-                RoundedCorners(10)
-            )
-            .into(imageIcon)
+    fun bind(item: String, listener: InvoiceListener){
+            Glide.with(imageIcon)
+                .load(item)
+                .apply(RequestOptions())
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(10)
+                )
+                .into(imageIcon)
+
+
 
 
         image.setOnClickListener {
             listener.onClickDelete(item)
         }
     }
+
 }

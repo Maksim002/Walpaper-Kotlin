@@ -8,11 +8,12 @@ import android.graphics.BitmapFactory
 import android.os.AsyncTask
 import android.os.Build
 import android.util.Log
+import com.example.walpaper_kotlin.ui.main.MainActivity
 import java.io.IOException
 import java.net.URL
 
-internal class DownloadImageTask(var context: Context) :
-    AsyncTask<String?, Void?, Bitmap?>() {
+internal class DownloadImageTask(var context: Context) : AsyncTask<String?, Void?, Bitmap?>() {
+
     override fun doInBackground(vararg params: String?): Bitmap? {
         val urldisplay = params[0]
         var mIcon11: Bitmap? = null
@@ -50,5 +51,6 @@ internal class DownloadImageTask(var context: Context) :
                 e.printStackTrace()
             }
         }
+        MainActivity.alert.hide()
     }
 }
