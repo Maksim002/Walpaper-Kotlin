@@ -1,14 +1,12 @@
 package com.example.tsj.adapters.pesonal
 
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.walpaper_kotlin.R
-import com.example.walpaper_kotlin.service.model.WalModel
-import com.example.walpaper_kotlin.service.models.Example
 
-class PersonalAdapterPayments() :
-    RecyclerView.Adapter<PersonalViewHolderPayments>() {
+class PersonalAdapterPayments(private val listener: InvoiceListener) : RecyclerView.Adapter<PersonalViewHolderPayments>() {
 
     private var model: ArrayList<String> = ArrayList()
 
@@ -21,8 +19,7 @@ class PersonalAdapterPayments() :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PersonalViewHolderPayments {
         return PersonalViewHolderPayments(
-            LayoutInflater.from(parent.context).inflate(R.layout.item_personal, parent, false)
-        )
+            LayoutInflater.from(parent.context).inflate(R.layout.item_personal, parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -35,6 +32,6 @@ class PersonalAdapterPayments() :
     }
 
     override fun onBindViewHolder(holderPlateiPersonal: PersonalViewHolderPayments, position: Int) {
-        holderPlateiPersonal.bind(model.get(position));
+        holderPlateiPersonal.bind(model.get(position),listener)
     }
 }

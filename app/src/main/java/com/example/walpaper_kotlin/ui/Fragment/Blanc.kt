@@ -1,32 +1,39 @@
 package com.example.walpaper_kotlin.ui.Fragment
 
 import android.app.WallpaperManager
+import android.content.Context
 import android.graphics.Bitmap
+import android.os.AsyncTask
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.ArrayMap
+import android.util.ArraySet
 import android.view.*
-import android.widget.ImageView
 import android.widget.SearchView
+import androidx.annotation.RequiresApi
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.tsj.adapters.pesonal.InvoiceListener
 import com.example.tsj.adapters.pesonal.PersonalAdapterPayments
 import com.example.walpaper_kotlin.Pagination
 import com.example.walpaper_kotlin.R
+import com.example.walpaper_kotlin.service.DownloadImageTask
 import com.example.walpaper_kotlin.service.WalpaperManager
 import com.example.walpaper_kotlin.service.model.WalModel
 import com.example.walpaper_kotlin.service.models.Example
 import com.example.walpaper_kotlin.ui.main.MainActivity
-import kotlinx.android.synthetic.main.item_personal.*
+import okio.utf8Size
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
-class Blanc : Fragment(){
+class Blanc : Fragment(), InvoiceListener {
     private lateinit var viewModel: BlanceViewModel
     private var BASE_URL: String = "https://api.unsplash.com/"
     private var host: String = "gW9sjuasObbkxughhFTiEftk-SjD7OuVSvI5aP7bRG4"
@@ -35,7 +42,11 @@ class Blanc : Fragment(){
     private lateinit var mLayoutManager: GridLayoutManager
     private var qvery = ""
 
+    private lateinit var click_image: DownloadImageTask
+
     private var page: Int = 1
+
+    lateinit var list_m: ArrayList<String>
 
     private lateinit var searchView: SearchView
 
@@ -61,7 +72,7 @@ class Blanc : Fragment(){
 
         recyclerView = view.findViewById(R.id.wal_recycler_view)
 
-        adapters = PersonalAdapterPayments()
+        adapters = PersonalAdapterPayments(this)
         recyclerView.apply {
             adapter = adapters
         }
@@ -139,17 +150,21 @@ class Blanc : Fragment(){
             val service = WalpaperManager.setupRetrofit(BASE_URL)
             service.getMealPlanse(host, key, page)
                 .enqueue(object : Callback<List<WalModel>> {
+                    @RequiresApi(Build.VERSION_CODES.M)
                     override fun onResponse(
                         call: Call<List<WalModel>>,
                         response: Response<List<WalModel>>
                     ) {
 
                         isLoading = false
+                        val list = ArrayList<String>()
+//                        list_m = ArrayList<String>()
 
-                        var list = ArrayList<String>()
                         for (i in response.body()!!) {
-                            list.add(i.urls?.small!!)
+                            list.add(i.urls?.raw!!)
+//                            list_m.add(i.urls?.full!!)
                         }
+
                         if (!update) {
                             adapters.addItem(list)
                         } else {
@@ -182,10 +197,8 @@ class Blanc : Fragment(){
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(text: String): Boolean {
-                MainActivity.alert.show()
                 if (text.equals(qvery)) {
                     loadNextPage()
-                    MainActivity.alert.hide()
                 } else {
                     page = 1
                     qvery = text
@@ -204,5 +217,19 @@ class Blanc : Fragment(){
             }
         })
         return
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onClickDelete(image: String) {
+        val map = ArraySet<String>()
+        for (i in image){
+            for (j in list_m.size.toString()){
+                if (i.toString() == j.toString()){
+                    map.add(j.toString())
+                }
+            }
+        }
+
+        click_image = DownloadImageTask(requireContext()).execute(image) as DownloadImageTask
     }
 }
