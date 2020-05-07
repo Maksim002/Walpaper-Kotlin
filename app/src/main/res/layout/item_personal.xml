@@ -21,12 +21,6 @@
             android:layout_margin="1dp"
             android:background="#B7BCBD"/>
 
-        <ProgressBar
-            android:id="@+id/progress_personal"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_gravity="center"/>
-
         <ImageView
             android:id="@+id/image_installation"
             android:layout_width="40dp"
@@ -36,5 +30,11 @@
             android:layout_gravity="bottom|right"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progress_personal"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"/>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

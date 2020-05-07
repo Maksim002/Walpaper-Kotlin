@@ -3,6 +3,16 @@
     <color name="colorPrimary">#A233B5</color>
     <color name="colorPrimaryDark">#83468C</color>
     <color name="colorAccent">#A233B5</color>
+
+    <color name="colorRed">#F81807</color>
+    <color name="colorYellow">#03A9F4</color>
+    <color name="colorGren">#F4DC06</color>
+    <color name="colorPrim">#0529EF</color>
+
+    <color name="light_font">#FBFBFB</color>
+    <color name="grey_font">#ff9e9e9e</color>
+    <color name="text_shadow">#7F000000</color>
+    <color name="text_shadow_white">#FFFFFF</color>
 </resources>
 <!--<color name="colorPrimary">#2F91DD</color>-->
 <!--<color name="colorPrimaryDark">#1F82CF</color>-->
